@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz Completion Check</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <button id="nextPageButton" style="display: none;" onclick="window.location.href='https://maidcc.sharepoint.com/:u:/r/sites/Maids.ccLearningHub/SitePages/Module-1-Section-2-.aspx?csf=1&web=1&share=EUsa9n8hTGZKsEWNBnUAUG8BhpvVduvn8LHxiGjD3CfwlQ&e=gbwqRr'">Next</button>
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            checkQuizCompletion();
+        });
+
+        function checkQuizCompletion() {
+            var userEmail = ''; // Placeholder for user email
+            var listName = 'QuizCompletion';
+            var siteUrl = window.location.origin;
+
+            $.ajax({
+                url: siteUrl + "/_api/web/currentuser",
+                method: "GET",
+                headers: { "Accept": "application/json; odata=verbose" },
+                success: function (data) {
+                    userEmail = data.d.Email; // Get current user's email
+
+                    $.ajax({
+                        url: siteUrl + "/_api/web/lists/getbytitle('" + listName + "')/items?$filter=UserEmail eq '" + userEmail + "'",
+                        method: "GET",
+                        headers: { "Accept": "application/json; odata=verbose" },
+                        success: function (data) {
+                            if (data.d.results.length > 0) {
+                                document.getElementById('nextPageButton').style.display = 'block'; // Show Next button
+                            } else {
+                                document.getElementById('nextPageButton').style.display = 'none'; // Hide Next button
+                            }
+                        },
+                        error: function (data) {
+                            console.error(data);
+                        }
+                    });
+                },
+                error: function (data) {
+                    console.error(data);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
